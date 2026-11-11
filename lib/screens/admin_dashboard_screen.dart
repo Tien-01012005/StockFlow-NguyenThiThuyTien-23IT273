@@ -206,40 +206,42 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            titleSpacing: isDesktop ? 24 : 16,
+            titleSpacing: isDesktop ? 24 : 12,
             title: Row(
               children: <Widget>[
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     color: colors.primaryContainer,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(9),
                   ),
                   child: Icon(
                     Icons.inventory_2_rounded,
                     color: colors.onPrimaryContainer,
-                    size: 20,
+                    size: 18,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Flexible(
+                const SizedBox(width: 8),
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         'StockFlow Admin',
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.w800,
-                          fontSize: 17,
+                          fontSize: 16,
                         ),
                       ),
                       Text(
-                        widget.user.email ?? 'Admin',
+                        'Nguyễn Thị Thùy Tiến — 23IT273',
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 11.5,
-                          color: colors.onSurfaceVariant,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2563EB),
+                          letterSpacing: -0.2,
                         ),
                       ),
                     ],
