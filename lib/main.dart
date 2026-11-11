@@ -9,23 +9,64 @@ import 'services/product_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const StockFlowApp());
+  Object? initError;
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).timeout(const Duration(seconds: 20));
+  } catch (e) {
+    initError = e;
+  }
+  runApp(StockFlowApp(initError: initError));
 }
 
 class StockFlowApp extends StatefulWidget {
-  const StockFlowApp({super.key});
+  final Object? initError;
+
+  const StockFlowApp({super.key, this.initError});
 
   @override
   State<StockFlowApp> createState() => _StockFlowAppState();
 }
 
 class _StockFlowAppState extends State<StockFlowApp> {
-  final AuthService _authService = AuthService();
-  final ProductService _productService = ProductService();
+  AuthService? _authService;
+  ProductService? _productService;
   ThemeMode _themeMode = ThemeMode.light;
+  Object? _runtimeInitError;
+  bool _retrying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _runtimeInitError = widget.initError;
+    if (_runtimeInitError == null) {
+      _authService = AuthService();
+      _productService = ProductService();
+    }
+  }
+
+  Future<void> _retryFirebaseInit() async {
+    setState(() => _retrying = true);
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ).timeout(const Duration(seconds: 20));
+      if (!mounted) return;
+      setState(() {
+        _runtimeInitError = null;
+        _authService = AuthService();
+        _productService = ProductService();
+        _retrying = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _runtimeInitError = e;
+        _retrying = false;
+      });
+    }
+  }
 
   void _toggleTheme() {
     setState(() {
@@ -70,14 +111,50 @@ class _StockFlowAppState extends State<StockFlowApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'StockFlow Admin - 23IT273',
-      debugShowCheckedModeBanner: false,
-      themeMode: _themeMode,
-      theme: _buildTheme(Brightness.light),
-      darkTheme: _buildTheme(Brightness.dark),
-      home: StreamBuilder<User?>(
-        stream: _authService.authStateChanges,
+    final authService = _authService;
+    final productService = _productService;
+
+    Widget body;
+    if (_runtimeInitError != null || authService == null || productService == null) {
+      body = Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.cloud_off, size: 64, color: Colors.orange),
+                const SizedBox(height: 16),
+                const Text(
+                  'Không thể kết nối Firebase',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '$_runtimeInitError',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: _retrying ? null : _retryFirebaseInit,
+                  icon: _retrying
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.refresh),
+                  label: Text(_retrying ? 'Đang thử lại...' : 'Thử lại'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      body = StreamBuilder<User?>(
+        stream: authService.authStateChanges,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
@@ -87,20 +164,29 @@ class _StockFlowAppState extends State<StockFlowApp> {
           final User? user = snapshot.data;
           if (user == null) {
             return LoginScreen(
-              authService: _authService,
+              authService: authService,
               onToggleTheme: _toggleTheme,
               isDarkMode: _themeMode == ThemeMode.dark,
             );
           }
           return AdminDashboardScreen(
             user: user,
-            authService: _authService,
-            productService: _productService,
+            authService: authService,
+            productService: productService,
             onToggleTheme: _toggleTheme,
             isDarkMode: _themeMode == ThemeMode.dark,
           );
         },
-      ),
+      );
+    }
+
+    return MaterialApp(
+      title: 'StockFlow Admin - 23IT273',
+      debugShowCheckedModeBanner: false,
+      themeMode: _themeMode,
+      theme: _buildTheme(Brightness.light),
+      darkTheme: _buildTheme(Brightness.dark),
+      home: body,
     );
   }
 }
