@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "664576556092",
+    "project_id": "stockflow-23it273-tien",
+    "storage_bucket": "stockflow-23it273-tien.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664576556092:android:1167b7ad80f70eacae9739",
+        "android_client_info": {
+          "package_name": "com.tien23it273.stockflow_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsSbROYpQdzAsOXuTDcDg9gkQPZdnOAz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,107 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // This security rules file assumes the following data structures:
+    //
+    // Collection: products
+    // Document ID: {productId}
+    // Access Model: Authenticated admin users (Firebase Auth Email/Password).
+    //   Ensure public self-registration is disabled in Firebase Auth or add
+    //   custom claims / allowlisted admin emails before opening user sign-up.
+    // Fields:
+    //   - name: string (required, trimmed non-empty, length 1..200) - Product name
+    //   - price: number (required, int or float, finite, 0..10000000000) - Product unit price
+    //   - soluong: int (required, 0..10000000) - Product stock quantity
+    //   - image: string (required, non-empty, length 1..700000) - https URL or compressed Base64 data URI
+    //
+    // All other collections and subcollections are explicitly denied.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Validate required fields exist on the target map
+    function hasRequiredFields(data, fields) {
+      return data.keys().hasAll(fields);
+    }
+
+    // Validate the target map contains only allowed fields
+    function hasOnlyAllowedFields(data, fields) {
+      return data.keys().hasOnly(fields);
+    }
+
+    // Validate string type, trimmed non-empty content, and character length bounds
+    function isValidNonEmptyString(value, minLen, maxLen) {
+      return value is string &&
+             value.size() >= minLen &&
+             value.size() <= maxLen &&
+             value.trim().size() > 0;
+    }
+
+    // Validate numeric price (int or float, finite, 0..10000000000)
+    // Note: Bounded range [0, 10000000000] rejects +/-Infinity; !math.isNaN rejects NaN.
+    function isValidPrice(value) {
+      return value is number &&
+             !math.isNaN(value) &&
+             value >= 0 &&
+             value <= 10000000000;
+    }
+
+    // Validate integer stock quantity (0..10000000)
+    function isValidQuantity(value) {
+      return value is int &&
+             value >= 0 &&
+             value <= 10000000;
+    }
+
+    // ===============================================================
+    // Domain Validators (CRITICAL: Enforced on BOTH create and update)
+    // ===============================================================
+
+    function isValidProduct(data) {
+      let requiredFields = ['name', 'price', 'soluong', 'image'];
+      return data is map &&
+             hasRequiredFields(data, requiredFields) &&
+             hasOnlyAllowedFields(data, requiredFields) &&
+             isValidNonEmptyString(data.name, 1, 200) &&
+             isValidPrice(data.price) &&
+             isValidQuantity(data.soluong) &&
+             isValidNonEmptyString(data.image, 1, 700000);
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Products collection (top-level documents only; subcollections are denied)
+    match /products/{productId} {
+      // Allow authenticated admins to get individual products and list/query the collection
+      allow read: if isAuthenticated();
+
+      // Enforce strict schema validation on both create and update
+      allow create: if isAuthenticated() && isValidProduct(request.resource.data);
+      allow update: if isAuthenticated() && isValidProduct(request.resource.data);
+
+      // Allow authenticated admins to delete products
+      allow delete: if isAuthenticated();
+    }
+
+    // Default deny all other collections and subcollections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

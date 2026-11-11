@@ -1,0 +1,40 @@
+{
+  "products": {
+    "2mW1azFF7HA62GbJzHH5": {
+      "name": "Đồng hồ thông minh Apple Watch Series 10",
+      "price": 10490000,
+      "soluong": 0,
+      "image": "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=800&q=80"
+    },
+    "Y3bJLXkBKzDhYPvvCrfR": {
+      "name": "Chuột không dây Logitech MX Master 3S",
+      "price": 2490000,
+      "soluong": 4,
+      "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80"
+    },
+    "aHUVZVcJhwRGXRBK1OAI": {
+      "name": "Bàn phím cơ Keychron K2 Pro",
+      "price": 2350000,
+      "soluong": 25,
+      "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80"
+    },
+    "vFPNonGlfu7KaYV9R8ah": {
+      "name": "MacBook Air M3 13 inch 256GB",
+      "price": 26990000,
+      "soluong": 12,
+      "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80"
+    },
+    "wG1Is6RmDpOdkItjzY1d": {
+      "name": "Màn hình Dell UltraSharp 27 inch 4K",
+      "price": 12900000,
+      "soluong": 3,
+      "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80"
+    },
+    "yfmxAE8NXKxcpK6FLA61": {
+      "name": "Tai nghe Sony WH-1000XM5",
+      "price": 6490000,
+      "soluong": 9,
+      "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"
+    }
+  }
+}
