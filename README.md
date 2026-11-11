@@ -1,6 +1,6 @@
 # StockFlow Admin - Quản lý sản phẩm đa nền tảng (Flutter & Firebase)
 
-- **Sinh viên thực hiện:** Nguyễn Thị Thủy Tiên
+- **Sinh viên thực hiện:** Nguyễn Thị Thùy Tiến
 - **Mã sinh viên:** 23IT273
 - **Môn học:** Lập trình đa nền tảng
 - **Công nghệ:** Flutter (Web + Android), Cloud Firestore, Firebase Authentication, Firebase Hosting

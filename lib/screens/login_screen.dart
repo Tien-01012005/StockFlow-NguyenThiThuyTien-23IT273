@@ -223,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                       Text(
-                                        'Nguyễn Thị Thủy Tiên • 23IT273',
+                                        'Nguyễn Thị Thùy Tiến • 23IT273',
                                         style: TextStyle(
                                           color: Colors.white70,
                                           fontSize: 12.5,
@@ -324,7 +324,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Divider(color: Colors.white24),
               SizedBox(height: 10),
               Text(
-                'Sinh viên: Nguyễn Thị Thủy Tiên — 23IT273',
+                'Sinh viên: Nguyễn Thị Thùy Tiến — 23IT273',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 12.5,
